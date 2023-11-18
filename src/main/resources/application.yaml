@@ -1,0 +1,46 @@
+server:
+  port: 8081
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8099/eureka/
+  instance:
+    preferIpAddress: true
+    hostName: 192.168.43.77
+
+spring:
+  application:
+    name: gateway-service
+  cloud:
+    gateway:
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOrigins: "*"
+            allowedMethods: "*"
+            allowedHeaders: '*'
+      routes:
+        - id: address-service
+          uri: lb://address-SERVICE
+          predicates:
+            - Path=/v1/address**
+
+        - id: identity-service
+          uri: lb://identity-SERVICE
+          predicates:
+            - Path=/user/**
+
+        - id: actividadDetalle-service
+          uri: lb://actividadDetalle-SERVICE
+          predicates:
+            - Path=/api/transaccionalData/**
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8090/realms/PRS
+
+logging:
+  level:
+    org.springframework: DEBUG
